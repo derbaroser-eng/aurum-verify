@@ -1,11 +1,17 @@
 # aurum-verify
 
-**Independent, evidence-backed verification of claims — sold per call to autonomous
-agents over x402. No account, no API key, no human in the loop.**
+**Independent, evidence-backed verification of claims and clean content extraction —
+sold per call to autonomous agents over x402. No account, no API key, no human in the loop.**
 
-Send a list of claims and the sources you want them checked against. Get back a
-machine-readable verdict for each claim, and behind every surviving verdict a quote
-that was checked **character-for-character** against the cited source.
+Two tools, one gate, one receipt, one price.
+
+**Verification.** Send a list of claims and the sources you want them checked against.
+Get back a machine-readable verdict for each claim, and behind every surviving verdict a
+quote that was checked **character-for-character** against the cited source.
+
+**Extraction.** Send one URL. Get back title, byline, excerpt, word count, and a clean
+markdown body with nav, footer, and hidden text stripped. Hidden content — comments,
+`display:none`, zero-width characters — is reported as data, never executed.
 
 ## Price
 
@@ -32,6 +38,21 @@ Headers follow the canonical x402 v1 family: `PAYMENT-REQUIRED`, `PAYMENT-SIGNAT
 `PAYMENT-RESPONSE`. A nonce buys exactly one answer; replay is `402`. An
 `idempotency_key` replays the same question for free.
 
+## Extract content
+
+```
+POST /v1/extract
+Content-Type: application/json
+
+{ "url": "https://example.org/some-article" }
+
+-> 402  PAYMENT-REQUIRED: <x402 v1 challenge>
+-> 200  { "article": { "title": ..., "byline": ..., "markdown": ... }, "receipt": ... }
+```
+
+One URL in, clean content out. A refused URL (SSRF guard) or a failed fetch returns
+`400` and **does not bill**.
+
 ## Verdicts
 
 - **supported** — a quotable source states the claim.
@@ -55,6 +76,8 @@ Headers follow the canonical x402 v1 family: `PAYMENT-REQUIRED`, `PAYMENT-SIGNAT
 |---|---|---|
 | `/v1/verify/claims` | POST | 402 challenge → 200 verdicts |
 | `/v1/verify/claims` | GET / HEAD | 402 challenge (discovery) |
+| `/v1/extract` | POST | 402 challenge → 200 article |
+| `/v1/extract` | GET / HEAD | 402 challenge (discovery) |
 | `/v1/pricing` | GET | 200 price + rail metadata |
 | `/.well-known/x402` | GET | 200 discovery document |
 | `/x402.json` | GET | 200 discovery document |
