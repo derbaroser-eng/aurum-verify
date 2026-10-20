@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>aurum-verify — Independent verification for autonomous agents</title>
-<meta name="description" content="Pay-per-call verification of claims against cited sources. Every verdict rests on a quote checked verbatim. $0.05 per call over x402. No account, no API key, no human in the loop.">
+<title>aurum-verify — Independent verification and extraction for autonomous agents</title>
+<meta name="description" content="Pay-per-call verification of claims against cited sources, plus clean content extraction from any URL. Every verdict rests on a quote checked verbatim. $0.05 per call over x402. No account, no API key, no human in the loop.">
 <link rel="alternate" type="application/json" href="/x402.json" title="x402 discovery document">
 <style>
 :root{--bg:#0a0c10;--panel:#11151c;--line:#1e2632;--fg:#e6edf3;--dim:#8b98a9;--acc:#4ade80;--acc2:#60a5fa;--warn:#fbbf24}
@@ -44,9 +44,18 @@ li{margin:6px 0}
 
 <h1>Independent verification for autonomous agents.</h1>
 
-<p class="lead">Send a list of claims and the sources you want them checked against.
-Get back a machine-readable verdict for each claim — and behind every surviving
-verdict, a quote that was checked <strong>character-for-character</strong> against the cited source.</p>
+<p class="lead">Two pay-per-call tools for autonomous agents, one gate, one receipt,
+one price.</p>
+
+<p><strong>Verification.</strong> Send a list of claims and the sources you want them
+checked against. Get back a machine-readable verdict for each claim — and behind every
+surviving verdict, a quote that was checked <strong>character-for-character</strong>
+against the cited source.</p>
+
+<p><strong>Extraction.</strong> Send one URL. Get back title, byline, excerpt, word
+count, and a clean markdown body with nav, footer, and hidden text stripped out. Hidden
+content — comments, <code>display:none</code>, zero-width characters — is reported as
+data, never executed. Same $0.05, same rail.</p>
 
 <p>An agent that checks its own output shares its own blind spots, and produces no
 evidence trail a third party can audit. This service returns the trail: source URL,
@@ -76,6 +85,22 @@ Content-Type: application/json
 <code>PAYMENT-SIGNATURE</code>, <code>PAYMENT-RESPONSE</code>. A nonce buys exactly one
 answer; replay is <code>402</code>. An <code>idempotency_key</code> replays the same question for free.</p>
 
+<h2>Extract content</h2>
+<pre>POST /v1/extract
+Content-Type: application/json
+
+{
+  "url": "https://example.org/some-article"
+}
+
+→ 402  PAYMENT-REQUIRED: &lt;x402 v1 challenge&gt;
+→ 200  { "article": { "title": …, "byline": …, "markdown": … }, "receipt": … }</pre>
+
+<p>One URL in, clean content out. Nav, footer, and boilerplate are dropped; hidden
+content is returned as a list you can inspect, never as text to obey. The same price,
+the same rail, the same receipt as verification. A refused URL (SSRF guard) or a failed
+fetch returns <code>400</code> and <strong>does not bill</strong>.</p>
+
 <h2>Verdicts</h2>
 <div class="grid">
 <div class="card"><h3>supported</h3><p>A quotable source states the claim.</p></div>
@@ -97,6 +122,8 @@ answer; replay is <code>402</code>. An <code>idempotency_key</code> replays the 
 <tr><th>Path</th><th>Method</th><th>Returns</th></tr>
 <tr><td><code>/v1/verify/claims</code></td><td>POST</td><td>402 challenge → 200 verdicts</td></tr>
 <tr><td><code>/v1/verify/claims</code></td><td>GET / HEAD</td><td>402 challenge (discovery)</td></tr>
+<tr><td><code>/v1/extract</code></td><td>POST</td><td>402 challenge → 200 article</td></tr>
+<tr><td><code>/v1/extract</code></td><td>GET / HEAD</td><td>402 challenge (discovery)</td></tr>
 <tr><td><code>/v1/pricing</code></td><td>GET</td><td>200 price + rail metadata</td></tr>
 <tr><td><code>/.well-known/x402</code></td><td>GET</td><td>200 discovery document</td></tr>
 <tr><td><code>/x402.json</code></td><td>GET</td><td>200 discovery document</td></tr>
@@ -107,7 +134,7 @@ answer; replay is <code>402</code>. An <code>idempotency_key</code> replays the 
 <code>quote_verbatim</code> flag before trusting a verdict downstream.</div>
 
 <div class="foot">
-aurum-verify · pay-per-call verification over x402 · USDC on Base<br>
+aurum-verify · pay-per-call verification and extraction over x402 · USDC on Base<br>
 Discovery: <a href="/x402.json">/x402.json</a> · <a href="/.well-known/x402">/.well-known/x402</a>
 </div>
 
