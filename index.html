@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>aurum-verify — Independent verification for autonomous agents</title>
+<meta name="description" content="Pay-per-call verification of claims against cited sources. Every verdict rests on a quote checked verbatim. $0.05 per call over x402. No account, no API key, no human in the loop.">
+<link rel="alternate" type="application/json" href="/x402.json" title="x402 discovery document">
+<style>
+:root{--bg:#0a0c10;--panel:#11151c;--line:#1e2632;--fg:#e6edf3;--dim:#8b98a9;--acc:#4ade80;--acc2:#60a5fa;--warn:#fbbf24}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:56px 22px 96px}
+.badge{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);border:1px solid #1d3b2a;background:#0c1a12;border-radius:999px;padding:5px 12px;margin-bottom:22px}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.12;margin:0 0 16px;letter-spacing:-.02em}
+h2{font-size:20px;margin:44px 0 12px;letter-spacing:-.01em}
+p{margin:0 0 14px;color:var(--dim)}
+p.lead{font-size:18px;color:#c3ced9}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:13.5px;color:#cdd9e5}
+code{background:#161b24;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:13.5px;color:#9fe8b8}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px}
+.card h3{margin:0 0 8px;font-size:15px;color:var(--fg)}
+.card p{margin:0;font-size:14px}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{color:var(--dim);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em}
+td code{font-size:13px}
+.price{font-size:34px;font-weight:700;color:var(--fg);letter-spacing:-.02em}
+.price small{font-size:15px;font-weight:400;color:var(--dim)}
+a{color:var(--acc2);text-decoration:none}
+a:hover{text-decoration:underline}
+.foot{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-size:13.5px;color:#6b7787}
+ul{color:var(--dim);padding-left:20px}
+li{margin:6px 0}
+.note{border-left:3px solid var(--warn);background:#191509;border-radius:0 10px 10px 0;padding:12px 16px;margin:16px 0;color:#e8d9a8;font-size:14.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<span class="badge">x402 · pay-per-call · no account</span>
+
+<h1>Independent verification for autonomous agents.</h1>
+
+<p class="lead">Send a list of claims and the sources you want them checked against.
+Get back a machine-readable verdict for each claim — and behind every surviving
+verdict, a quote that was checked <strong>character-for-character</strong> against the cited source.</p>
+
+<p>An agent that checks its own output shares its own blind spots, and produces no
+evidence trail a third party can audit. This service returns the trail: source URL,
+verbatim quote, retrieval mode, staleness, and a deterministic reason for the verdict.</p>
+
+<h2>Price</h2>
+<div class="card">
+<div class="price">$0.05 <small>USD per call · 50,000 atomic USDC · pay-per-call</small></div>
+<p style="margin-top:10px">Settled over <strong>x402</strong> (exact scheme, USDC on Base). No subscription,
+no account, no API key, no minimum.</p>
+</div>
+
+<h2>Call it</h2>
+<pre>POST /v1/verify/claims
+Content-Type: application/json
+
+{
+  "claims": ["The library was released in 2019."],
+  "sources": [{"url": "https://example.org/release-notes"}],
+  "require_verbatim_quotes": true
+}
+
+→ 402  PAYMENT-REQUIRED: &lt;x402 v1 challenge&gt;
+→ 200  PAYMENT-RESPONSE: &lt;x402 v1 settlement&gt;   (with PAYMENT-SIGNATURE credential)</pre>
+
+<p>Headers follow the canonical x402 v1 family: <code>PAYMENT-REQUIRED</code>,
+<code>PAYMENT-SIGNATURE</code>, <code>PAYMENT-RESPONSE</code>. A nonce buys exactly one
+answer; replay is <code>402</code>. An <code>idempotency_key</code> replays the same question for free.</p>
+
+<h2>Verdicts</h2>
+<div class="grid">
+<div class="card"><h3>supported</h3><p>A quotable source states the claim.</p></div>
+<div class="card"><h3>contradicted</h3><p>A quotable source states the opposite.</p></div>
+<div class="card"><h3>mixed</h3><p>Sources disagree with each other.</p></div>
+<div class="card"><h3>unverifiable</h3><p>No quotable source found. A valid, first-class answer — never a confident guess.</p></div>
+</div>
+
+<h2>Limits — what it will not do</h2>
+<ul>
+<li>It will not certify that a claim is <em>true in the world</em> — it reports what the cited sources say and whether they are quotable.</li>
+<li>It will not assert anything its own code could not corroborate. If quotes cannot be found, the answer is <code>unverifiable</code>.</li>
+<li>If no model lane answers, it returns <code>503</code> and <strong>does not bill</strong>.</li>
+<li>Billing honesty: settlement happens before execution, so a paid call whose evidence does not check out returns a billed <code>unverifiable</code> verdict — never a fabrication.</li>
+</ul>
+
+<h2>Machine-readable</h2>
+<table>
+<tr><th>Path</th><th>Method</th><th>Returns</th></tr>
+<tr><td><code>/v1/verify/claims</code></td><td>POST</td><td>402 challenge → 200 verdicts</td></tr>
+<tr><td><code>/v1/verify/claims</code></td><td>GET / HEAD</td><td>402 challenge (discovery)</td></tr>
+<tr><td><code>/v1/pricing</code></td><td>GET</td><td>200 price + rail metadata</td></tr>
+<tr><td><code>/.well-known/x402</code></td><td>GET</td><td>200 discovery document</td></tr>
+<tr><td><code>/x402.json</code></td><td>GET</td><td>200 discovery document</td></tr>
+<tr><td><code>/health</code></td><td>GET</td><td>200 liveness</td></tr>
+</table>
+
+<div class="note">Verification is evidence reporting, not truth certification. Read every
+<code>quote_verbatim</code> flag before trusting a verdict downstream.</div>
+
+<div class="foot">
+aurum-verify · pay-per-call verification over x402 · USDC on Base<br>
+Discovery: <a href="/x402.json">/x402.json</a> · <a href="/.well-known/x402">/.well-known/x402</a>
+</div>
+
+</div>
+</body>
+</html>
