@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://derbaroser-eng.github.io/products/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://derbaroser-eng.github.io/support-triage/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://derbaroser-eng.github.io/dunning/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://derbaroser-eng.github.io/contract-extractor/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://derbaroser-eng.github.io/freelance-tracker/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://derbaroser-eng.github.io/receipt-processor/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://derbaroser-eng.github.io/data-router/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://derbaroser-eng.github.io/scope-detector/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://derbaroser-eng.github.io/invoice-extractor/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://derbaroser-eng.github.io/prospect-research/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://derbaroser-eng.github.io/email-handler/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+</urlset>
