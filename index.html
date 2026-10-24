@@ -63,7 +63,7 @@ https://en.wikipedia.org/wiki/Python_(programming_language)</textarea>
 </div>
 
 <h2>Try it with curl</h2>
-<pre><code>curl -s -X POST https://documents-planned-sent-ought.trycloudflare.com/v1/verify/claims \
+<pre><code>curl -s -X POST https://cutting-oclc-studio-theology.trycloudflare.com/v1/verify/claims \
   -H "Content-Type: application/json" \
   -d '{"claims":["AI will replace all jobs"],"sources":[{"url":"https://ourworldindata.org/ai-jobs"}],"minimum_sources":1}'</code></pre>
 <p>That returns <code>402</code> with an x402 challenge. Settle it and the verdict is returned.</p>
@@ -85,7 +85,7 @@ result = verify(
 <p><a href="https://agent402.tools">agent402.tools</a> · <a href="https://x402dash.com">x402dash</a> · <a href="https://402index.io">402index.io</a></p>
 
 <script>
-const EP = "https://documents-planned-sent-ought.trycloudflare.com/v1/verify/claims";
+const EP = "https://cutting-oclc-studio-theology.trycloudflare.com/v1/verify/claims";
 document.getElementById("ep").textContent = EP;
 async function verify() {
   const claim = document.getElementById("claim").value.trim();
